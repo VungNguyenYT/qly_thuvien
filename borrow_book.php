@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 include 'db.php';
 include 'includes/header.php';
 
@@ -11,56 +12,56 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $soLuong = $_POST['soluong'];
     $ngay = date('Y-m-d');
 
-    // Lấy tên học sinh và tên sách
+    // Lấy tên học sinh và sách
     $tenHS = $conn->query("SELECT TenHS FROM HocSinh WHERE MaHS = '$maHS'")->fetch_assoc()['TenHS'];
     $tenSach = $conn->query("SELECT TenSach FROM Sach WHERE MaSach = '$maSach'")->fetch_assoc()['TenSach'];
 
-    // Lưu thông tin mượn vào bảng ThongTinMuon
-    $stmt = $conn->prepare("INSERT INTO ThongTinMuon (MaHS, TenHS, MaSach, TenSach, SoLuong, NgayMuon)
-                            VALUES (?, ?, ?, ?, ?, ?)");
+    // Lưu vào bảng ThongTinMuon
+    $stmt = $conn->prepare("INSERT INTO ThongTinMuon (MaHS, TenHS, MaSach, TenSach, SoLuong, NgayMuon, TrangThai)
+                            VALUES (?, ?, ?, ?, ?, ?, 'Chưa trả')");
     $stmt->bind_param("ssssis", $maHS, $tenHS, $maSach, $tenSach, $soLuong, $ngay);
     $stmt->execute();
 
     // Trừ số lượng sách
     $conn->query("UPDATE Sach SET SoLuong = SoLuong - $soLuong WHERE MaSach = '$maSach'");
-
-    echo "<p style='color:green;'>✅ Đã lưu thông tin mượn vào bảng ThongTinMuon!</p>";
 }
-
-
 ?>
 
+<?php if ($_SERVER['REQUEST_METHOD'] === 'POST') { ?>
+    <div class="notice">
+        ✅ Đã lưu thông tin mượn sách thành công!
+    </div>
+<?php } ?>
+
 <h3>📥 Mượn sách</h3>
-<form method="post">
-    <label>Mã học sinh:</label><br>
-    <select name="mahs" required>
+<form method="post" class="borrow-form">
+    <label for="mahs">👤 Chọn học sinh:</label>
+    <select name="mahs" id="mahs" required>
+        <option value="">-- Chọn học sinh --</option>
         <?php
         $hs = $conn->query("SELECT * FROM HocSinh");
         while ($r = $hs->fetch_assoc()) {
             echo "<option value='{$r['MaHS']}'>{$r['TenHS']} ({$r['MaHS']})</option>";
         }
         ?>
-    </select><br><br>
+    </select>
 
-    <label>Chọn sách:</label><br>
-    <select name="masach" required>
+    <label for="masach">📚 Chọn sách:</label>
+    <select name="masach" id="masach" required>
+        <option value="">-- Chọn sách --</option>
         <?php
         $sach = $conn->query("SELECT * FROM Sach WHERE SoLuong > 0");
         while ($r = $sach->fetch_assoc()) {
             echo "<option value='{$r['MaSach']}'>{$r['TenSach']} ({$r['SoLuong']} còn lại)</option>";
         }
         ?>
-    </select><br><br>
+    </select>
 
-    <label>Số lượng mượn:</label><br>
-    <input type="number" name="soluong" min="1" required><br><br>
+    <label for="soluong">🔢 Số lượng mượn:</label>
+    <input type="number" name="soluong" id="soluong" min="1" required>
 
-    <button type="submit">📚 Mượn sách</button>
-
-
+    <button type="submit">✅ Mượn sách</button>
 </form>
-
-<hr>
 
 <h3>📋 Danh sách sách đã mượn</h3>
 <table>
@@ -91,8 +92,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     ?>
 </table>
-
-
 
 </div>
 </body>
