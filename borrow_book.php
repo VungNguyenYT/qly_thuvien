@@ -69,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <th>Tên sách</th>
         <th>Số lượng</th>
         <th>Ngày mượn</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
     </tr>
     <?php
     $result = $conn->query("SELECT * FROM ThongTinMuon ORDER BY NgayMuon DESC");
@@ -78,10 +80,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <td>{$row['TenSach']}</td>
                 <td>{$row['SoLuong']}</td>
                 <td>{$row['NgayMuon']}</td>
-              </tr>";
+                <td>{$row['TrangThai']}</td>
+                <td>";
+        if ($row['TrangThai'] === 'Chưa trả') {
+            echo "<a href='return_book.php?id={$row['ID']}' class='button'>✅ Trả sách</a>";
+        } else {
+            echo "✔️";
+        }
+        echo "</td></tr>";
     }
     ?>
 </table>
+
 
 
 </div>
