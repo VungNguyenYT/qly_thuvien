@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 
 <head>
-    <title>Quản lý thư viện</title>
+    <meta charset="UTF-8">
+    <title>Quản lý Thư viện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/style.css">
 </head>
 
 <body>
-    <h2>📚 Quản lý Thư viện</h2>
-    <p>
-        <a href="index.php" class="button">Trang chủ</a>
-        <a href="add_book.php" class="button">Thêm sách</a>
-    </p>
-    <hr>
+    <div class="container">
+        <h1>📚 Quản lý Thư viện</h1>
+        <nav>
+            <a href="index.php">Trang chủ</a>
+            <a href="add_book.php">➕ Thêm sách</a>
+            <a href="borrow_book.php">📥 Mượn sách</a>
+
+        </nav>
+        <hr>
